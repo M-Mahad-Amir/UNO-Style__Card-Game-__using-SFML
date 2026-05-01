@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-class GameManager
+class GameManager   // mutahir going ton review
 {
 private:
     // --- Singleton ---
