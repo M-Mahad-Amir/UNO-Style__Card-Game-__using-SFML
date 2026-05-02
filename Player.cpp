@@ -8,6 +8,11 @@ private:
     bool saidUno;        // tracks whether player called UNO when hand hit 1 card
 
 public:
+    void operator =(vector<Card*> dealt)
+{
+    hand=dealt;
+    dealt.clear();
+}
     // Constructor: sets player identity, hand starts empty
     Player(const string &name)
         : name(name), saidUno(false) {}
