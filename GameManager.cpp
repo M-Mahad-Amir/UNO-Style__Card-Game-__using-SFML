@@ -148,7 +148,7 @@ public:
         }
 
     // --- One Player's Turn ---
-    void playerTurn()
+    void playerTurn()//why cant we do this in main running loop calling method which needed
     {
         Player *p = getCurrentPlayer();
 
