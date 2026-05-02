@@ -38,24 +38,18 @@ public:
 
     // --- Playability Check ---
     // Separate from Player::hasPlayableCard because here we check ONE specific card
-    bool isPlayable(Card *card)
+    bool isPlayable(Card *card)//edited by Mutahir
     {
-        if (card->getType() == CardType::WILD ||
-            card->getType() == CardType::WILD_DRAW_FOUR)
-            return true;
-        // if (card->getColor() == currentColor) return true;
-        // if (card->getType() == topCard->getType()) {
-        //     if (card->getType() == CardType::NUMBER)
-        //         return card->getValue() == topCard->getValue();
-        //     return true; // same special type always matches
-        // }
+        if (card->getType() == CardType::WILD ||card->getType() == CardType::WILD_DRAW_FOUR) return true;
+        if (card->getColor() == currentColor) return true;
+        if (card->getType() == topCard->getType()) {
+            if (card->getType() == CardType::NUMBER)
+                return card->getValue() == topCard->getValue();
+            return true; // same special type always matches
+        }
         if (card->getColor() == topCard->getColor())
             return true;
-        // if (card->getType() == topCard->getType()) {
-        if (card->getType() == CardType::NUMBER)
-            return card->getValue() == topCard->getValue();
-        return true; // same special type always matches
-        // }
+        
         return false;
     }
     // return color==other.getColor()||type==other.getType();   // old operator overloading
@@ -75,11 +69,6 @@ public:
     {
         switch (card->getType())
         {
-
-            // case CardType::NUMBER:
-            //     // currentColor = card->getColor();
-            //     break;
-
         case CardType::SKIP:
         case CardType::REVERSE: // Reverse = Skip in 2-player
             // currentColor = card->getColor();
@@ -111,6 +100,8 @@ public:
                 getOtherPlayer()->addCard(UnoDeck::GenerateOneCard());
             advanceTurn(); // pre-advance
             break;
+            default:
+            break;
         }
     }
 
@@ -139,19 +130,21 @@ public:
     //     //     // cout << "Color chosen: " << colorToString(currentColor) << "\n";
     //     // }
     // }
-    void Wild_and_WildDrawFour(Card * card)
+    void Wild_and_WildDrawFou(Card * card)
         {
-            //  Card *temp=players[currentPlayerIdx]->cmp(card);
-            //  delete topCard;
-            //  if (temp!=nullptr) topCard=temp;
+            if(isPlayable(card))
+            {
+             playCard(getCurrentPlayer(),card);
+            }//if not playable then advance turn
 
-            cout << "Pick a color — 0:Red  1:Blue  2:Green  3:Yellow: ";
-            int choice;
-            cin >> choice;
-            playCard(getCurrentPlayer(), card);
+            
+            // cout << "Pick a color — 0:Red  1:Blue  2:Green  3:Yellow: ";
+            // int choice;
+            // cin >> choice;
+            // playCard(getCurrentPlayer(), card);
 
-            // card must be removed from currentplayer and that card must be added to topcard
-            // cout << "Color chosen: " << colorToString(currentColor) << "\n";
+            // // card must be removed from currentplayer and that card must be added to topcard
+            // // cout << "Color chosen: " << colorToString(currentColor) << "\n";
         }
 
     // --- One Player's Turn ---
