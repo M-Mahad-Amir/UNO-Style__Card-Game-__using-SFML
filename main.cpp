@@ -14,14 +14,14 @@
 //    WIN         —  winner announcement
 //
 //  Build (from SFML-3.0.2 root):
-//    g++ -Isrc/include -std=c++17 -c coding/UNO_Game_v5.cpp coding/main.cpp
-//    g++ UNO_Game_v5.o main.o -o uno_game -Lsrc/lib
+//    g++ -Isrc/include -std=c++17 -c coding/UNO_Game.cpp coding/main.cpp
+//    g++ UNO_Game.o main.o -o uno_game -Lsrc/lib
 //        -lsfml-graphics -lsfml-window -lsfml-system -lopengl32
 //
 //  Font used: arialbd.ttf (Arial Bold) located next to the exe.
 // ============================================================
 
-#include "UNO_Game_v5.h"            // game backend (all logic)
+#include "UNO_Game.h"            // game backend (all logic)
 #include <SFML/Graphics.hpp>         // SFML 3.0.2 graphics
 #include <cmath>
 #include <algorithm>
