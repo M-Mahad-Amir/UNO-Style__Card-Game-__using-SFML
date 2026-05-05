@@ -4,15 +4,6 @@
 //  All implementations live in UNO_Game_v5.cpp.
 //  Include this header in every translation unit that needs
 //  game logic.
-
-//  What changed from the console version:
-//    • Removed all cout / cin / displaycardsinhand
-//    • Removed runGame() / playerTurn() (GUI drives the loop)
-//    • Added TurnPhase enum for GUI state-machine
-//    • Added GUI-friendly action methods on GameManager
-//    • startGame() now deals 7 cards (was 10, debug value)
-//    • resetGame() lets the WIN screen restart without leaks
-// ============================================================
 // ============================================================
 #pragma once
 
