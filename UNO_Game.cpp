@@ -366,8 +366,8 @@ void GameManager::resetGame()
     winner        = nullptr;
     lastDrawnCard = nullptr;
 
-    players.push_back(new Player("Tom"));
-    players.push_back(new Player("Jerry"));
+    players.push_back(new Player(""));
+    players.push_back(new Player(""));
     startGame();
 }
 
