@@ -713,8 +713,12 @@ int main()
                     drawButton(window, font, "UNO!", bx, by, bw, bh, sf::Color(22, 55, 22), 72);
                 }
             }
+
         } // end GAME screen draw
+
         window.display();
+
     } // end main loop
+    
 return 0;
 }
