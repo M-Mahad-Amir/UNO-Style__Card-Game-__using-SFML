@@ -100,10 +100,9 @@ Screen screen = Screen::MENU;
 bool showMsg = false;
 sf::Clock msgClock;
 
-// UNO popup: show when any player has exactly 1 card
+// used by uno popup
 bool showUno = false;
 sf::Clock unoClock;
-int lastUnoShownFor = -1; // player index for which UNO was last shown
 
 int main()
 {
@@ -129,9 +128,10 @@ int main()
 
     // ---- Game manager (singleton) ------------------------------
     GameManager *gm = GameManager::getInstance();
-    gm->addPlayer(new Player("David"));
-    gm->addPlayer(new Player("Sarah"));
+    gm->addPlayer(new Player("Tom"));
+    gm->addPlayer(new Player("Jerry"));
     gm->startGame();
+    int prevHandSz[2] = {-1, -1}; // tracks hand sizes from the previous frame  // used bu uno popup
 
     Screen screen = Screen::MENU;
 
@@ -188,7 +188,11 @@ int main()
                 // Win screen: only "New Game" is clickable
                 if (phase == TurnPhase::GAME_OVER)
                 {
-                    if (sf::FloatRect({370, 390}, {280, 52}).contains(mouse))
+                    const float _panelY = (float(WIN_H) - 280.f) / 2.f;
+                    const float _btnW = 280.f, _btnH = 52.f;
+                    const float _btnX = float(WIN_W) / 2.f - _btnW / 2.f;
+                    const float _btnY = _panelY + 205.f;
+                    if (sf::FloatRect({_btnX, _btnY}, {_btnW, _btnH}).contains(mouse))
                         gm->resetGame();
                     continue;
                 }
@@ -381,9 +385,14 @@ int main()
                 tint.setFillColor(sf::Color(0, 0, 0, 185));
                 window.draw(tint);
 
-                // Winner panel
-                sf::RectangleShape panel({480.f, 220.f});
-                panel.setPosition({310.f, 205.f});
+                // Winner panel — centred on screen
+                const float panelW = 480.f, panelH = 280.f;
+                const float panelX = (float(WIN_W) - panelW) / 2.f;
+                const float panelY = (float(WIN_H) - panelH) / 2.f;
+                const float cx     = float(WIN_W) / 2.f;
+
+                sf::RectangleShape panel({panelW, panelH});
+                panel.setPosition({panelX, panelY});
                 panel.setFillColor(sf::Color(22, 55, 22));
                 panel.setOutlineColor(sf::Color::Yellow);
                 panel.setOutlineThickness(4.f);
@@ -394,27 +403,30 @@ int main()
                 wt.setFillColor(sf::Color::Yellow);
                 wt.setStyle(sf::Text::Bold);
                 sf::FloatRect wb = wt.getLocalBounds();
-                wt.setOrigin({wb.size.x / 2.f, 0.f});
-                wt.setPosition({float(WIN_W) / 2.f, 228.f});
+                wt.setOrigin({wb.size.x / 2.f, wb.size.y / 2.f});
+                wt.setPosition({cx, panelY + 55.f});
                 window.draw(wt);
 
                 sf::Text sub(font, "Congratulations!", 22);
                 sub.setFillColor(sf::Color::White);
                 sf::FloatRect sb = sub.getLocalBounds();
-                sub.setOrigin({sb.size.x / 2.f, 0.f});
-                sub.setPosition({float(WIN_W) / 2.f, 298.f});
+                sub.setOrigin({sb.size.x / 2.f, sb.size.y / 2.f});
+                sub.setPosition({cx, panelY + 125.f});
                 window.draw(sub);
 
                 sf::Text hint(font, "Press  'New Game'  to play again.", 16);
                 hint.setFillColor(sf::Color(180, 180, 180));
                 sf::FloatRect hb = hint.getLocalBounds();
-                hint.setOrigin({hb.size.x / 2.f, 0.f});
-                hint.setPosition({float(WIN_W) / 2.f, 336.f});
+                hint.setOrigin({hb.size.x / 2.f, hb.size.y / 2.f});
+                hint.setPosition({cx, panelY + 165.f});
                 window.draw(hint);
 
                 // New Game button — x/y/w/h MUST match hit-rect above
+                const float btnW = 280.f, btnH = 52.f;
+                const float btnX = cx - btnW / 2.f;
+                const float btnY = panelY + 205.f;
                 drawButton(window, font, "New Game",
-                           370, 390, 280, 52, sf::Color(45, 110, 45));
+                           btnX, btnY, btnW, btnH, sf::Color(45, 110, 45));
 
                 window.display();
                 continue; // skip the normal game draw below
@@ -424,23 +436,19 @@ int main()
             Player *cur = gm->getCurrentPlayer();
             Player *other = gm->getOtherPlayer();
 
-            // Automatic UNO detection: show a centred "UNO!" dialog
-            // when a player's hand size becomes exactly 1 (only show once per player)
+            // UNO detection — fires the moment any player's hand transitions to exactly 1 card
             int ci = gm->getCurrentPlayerIdx();
-            int szCur = cur->getHandSize();
-            int szOther = other->getHandSize();
-            if (szCur == 1 && lastUnoShownFor != ci)
+            int sz[2] = { (ci == 0 ? cur : other)->getHandSize(),
+                        (ci == 0 ? other : cur)->getHandSize() };
+
+            if ((sz[0] == 1 && prevHandSz[0] != 1) ||
+                (sz[1] == 1 && prevHandSz[1] != 1))
             {
                 showUno = true;
                 unoClock.restart();
-                lastUnoShownFor = ci;
             }
-            else if (szOther == 1 && lastUnoShownFor != (1 - ci))
-            {
-                showUno = true;
-                unoClock.restart();
-                lastUnoShownFor = 1 - ci;
-            }
+            prevHandSz[0] = sz[0];
+            prevHandSz[1] = sz[1];
 
             // Green felt background
             sf::RectangleShape felt({float(WIN_W) - 80.f, float(WIN_H) - 60.f});
@@ -693,7 +701,7 @@ int main()
                     showMsg = false;
                 else
                 {
-        
+
                     //   cardY = WIN_H - 200 = 620, so we place the box at y = 620 - 70 = 550
                     //   Box centred horizontally: x = (WIN_W - 500) / 2 = 433
                     drawButton(window, font, "Unplayable card! Turn passed.",
@@ -703,7 +711,7 @@ int main()
 
             if (showUno)
             {
-                if (unoClock.getElapsedTime().asSeconds() >= 3.f)
+                if (unoClock.getElapsedTime().asSeconds() >= 2.f)
                     showUno = false;
                 else
                 {
