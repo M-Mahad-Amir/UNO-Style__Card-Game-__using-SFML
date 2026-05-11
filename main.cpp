@@ -4,6 +4,8 @@
 #include <string>
 #include <algorithm>
 
+                    /*	SFML based GUI --- Frontend related components, renderings etc.	  */
+
 // ============================================================
 //  CONSTANTS
 // ============================================================

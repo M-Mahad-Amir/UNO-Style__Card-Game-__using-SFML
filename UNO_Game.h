@@ -6,6 +6,8 @@
 #include <iostream>
 using namespace std;
 
+                /*  OOP based Backend --- handles Game Logic, Turns, Cards, Player Interactions etc.   */
+
 // ============================================================
 //  ENUMS
 //  Define the core types used throughout the game.
